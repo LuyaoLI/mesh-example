@@ -1,0 +1,23 @@
+<launch>
+	<arg name="pcd_filepath" default="/home/chaohui/cloud_corrected.pcd" />
+	<node pkg="map_visualization_2" type="load_map" name="load_map" 
+		args="$(arg pcd_filepath)" output="screen"/>
+
+	<node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
+		<param name="resolution" value="0.05" />
+		<param name="frame_id" type="string" value="map" />
+		<param name="sensor_model/max_range" value="35.0" />
+		<param name="occupancy_min_z" value="0.0" />
+		<param name="occupancy_max_z" value="2.5" />
+		<!-- Map from topic that is publishing point clouds -->
+		<remap from="cloud_in" to="/points" />
+		<remap from="projected_map" to="map" />
+	</node>
+
+	<!--<arg name="map_name" default="/home/chaohui/map" />
+     <node name="map_server" pkg="map_server" type="map_saver"
+     	args="-f $(arg map_name)" />-->
+
+    <node name="rviz" pkg="rviz" type="rviz" required="true"
+		args="-d $(find map_visualization_2)/rviz/load_map.rviz" />
+</launch>
